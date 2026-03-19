@@ -1,0 +1,35 @@
+---
+networks:
+  networks_infra_net:
+    external: true
+
+services:
+  # ClickHouse — OneUptime analytics and telemetry
+  oneuptime-clickhouse:
+    image: 'clickhouse/clickhouse-server:25.7'
+    container_name: oneuptime-clickhouse
+    restart: unless-stopped
+    ports:
+      - '30202:8123'
+      - '30203:9000'
+    environment:
+      - CLICKHOUSE_USER=${ONEUPTIME_CH_USER}
+      - CLICKHOUSE_PASSWORD=${ONEUPTIME_CH_PASSWORD}
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+      - TZ=America/Mexico_City
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    volumes:
+      - /mnt/HomeLab/OneUptime/ClickHouse/data:/var/lib/clickhouse
+      - /mnt/HomeLab/OneUptime/ClickHouse/logs:/var/log/clickhouse-server
+    networks:
+      - networks_infra_net
