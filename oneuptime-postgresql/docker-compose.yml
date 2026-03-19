@@ -4,7 +4,7 @@ networks:
     external: true
 
 services:
-  # PostgreSQL — OneUptime database
+  # 🐘 PostgreSQL — OneUptime database
   oneuptime-postgresql:
     image: 'postgres:15'
     container_name: oneuptime-postgresql
