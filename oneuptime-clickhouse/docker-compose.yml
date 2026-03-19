@@ -4,7 +4,7 @@ networks:
     external: true
 
 services:
-  # ClickHouse — OneUptime analytics and telemetry
+  # 🏠 ClickHouse — OneUptime analytics and telemetry
   oneuptime-clickhouse:
     image: 'clickhouse/clickhouse-server:25.7'
     container_name: oneuptime-clickhouse
