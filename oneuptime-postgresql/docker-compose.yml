@@ -1,0 +1,28 @@
+---
+networks:
+  networks_infra_net:
+    external: true
+
+services:
+  # PostgreSQL — OneUptime database
+  oneuptime-postgresql:
+    image: 'postgres:15'
+    container_name: oneuptime-postgresql
+    restart: unless-stopped
+    ports:
+      - '30200:5432'
+    environment:
+      - POSTGRES_USER=${ONEUPTIME_PG_USER}
+      - POSTGRES_PASSWORD=${ONEUPTIME_PG_PASSWORD}
+      - POSTGRES_DB=${ONEUPTIME_PG_DB}
+      - TZ=America/Mexico_City
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - /mnt/HomeLab/OneUptime/PostgreSQL/data:/var/lib/postgresql/data
+    networks:
+      - networks_infra_net
