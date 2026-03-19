@@ -1,0 +1,27 @@
+---
+networks:
+  networks_infra_net:
+    external: true
+
+services:
+  # 🔴 Redis — OneUptime cache and queue
+  oneuptime-redis:
+    image: 'redis:7.0.12'
+    container_name: oneuptime-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${ONEUPTIME_REDIS_PASSWORD:?ONEUPTIME_REDIS_PASSWORD must be set} --appendonly yes
+    ports:
+      - '30201:6379'
+    environment:
+      - REDISCLI_AUTH=${ONEUPTIME_REDIS_PASSWORD}
+      - TZ=America/Mexico_City
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - /mnt/HomeLab/OneUptime/Redis/data:/data
+    networks:
+      - networks_infra_net
